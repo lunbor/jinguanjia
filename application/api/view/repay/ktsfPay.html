@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- 随大小设备自动适配 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=0, user-scalable=no"/>
+	<!-- 去除苹果手机的默认样式 -->
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="x5-orientation" content="portrait"/>
+	<meta name="screen-orientation" content="portrait"/>
+
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!-- 取消设备对手机号进行识别 -->
+	<meta name="format-detection" content="telephone=no, email=no">
+	<meta name="msapplication-tap-highlight" content="no">
+	<title>提交支付</title>
+	<link rel="stylesheet" href="/static/register/css/reset.css">
+	<link rel="stylesheet" href="/static/register/css/mui.min.css">
+	<script src="/static/register/js/mui.min.js"></script>
+	
+	<script src="/static/register/js/jQuery-2.1.4.min.js"></script>
+	<style>
+		.header{position: relative;height: 60px;padding-top: 20px;background-color: #4aa7fc;}
+		.header img{position:absolute;left: 15px;top: 30px;width: 14px;height: 20px; }
+		.header p{text-align: center;font-size: 16px;color: #fff;line-height: 40px;margin-bottom: 0;}
+		.sContent .pay_card{padding: 0 15px;background-color: #fbfbfb;}
+		.pay_card label{display: block;width: 100%;width: 100%;font-size: 14px;color: #000;font-weight: 500;height: 54px;line-height: 54px;}
+		.pay_card label input{border: none;width: 70%;background: none;font-size: 14px;color: #7b8cb8;margin-bottom: 0}
+		.pay_card label:first-child{border-bottom: 1px solid #ddd;}
+		.pay_money{background-color: #fff;padding:20px 15px;}
+		.pay_money p{font-size: 14px;color: #000;}
+		.pay_money h2{padding-bottom: 20px;padding-top:10px;}
+		.pay_money .line{width: 100%;height: 1px;background-color: #ddd;margin-bottom: 20px;}
+		.pay_money span{font-size: 14px;color: #666;padding-right: 20px;}
+		.pay_money i{font-size: 14px;color: #7b8cb8;}
+		.yzm{position: relative;background-color: #fff;margin-top: 20px;height: 50px;line-height:50px;}
+		.yzm label{width: 100%;font-size: 14px;line-height: 50px;padding-left: 15px;}
+		.yzm label input{width:70%; border:none;background:none;font-size: 14px;margin-bottom: 0;}
+		.yzm button{position: absolute;right: 0;top: 0;display: block;height: 50px;line-height: 50px;padding: 0 20px;border: none;background-color: #4aa7fc;color: #fff;}
+		.btn{margin:15px;height: 40px;line-height: 40px;text-align: center;background-color: #4aa7fc;border-radius: 5px;}
+		.btn a{width: 100%;display: block;color: #fff;}
+	</style>
+
+</head>
+<body>
+	<div class="sContent">
+		<div style="font-size:14px; padding-left:20px; line-height:40px; background-color:#000000; color:#FFFFFF;">*请您完成第三方支付授权</div>
+		<div class="pay_card">
+			<form action="">
+				
+				<label for="">信用卡：<input type="text" value="{$creditRegist.credit_code}" readonly="readonly" /></label>
+			</form>	
+		</div>
+		<div class="yzm">
+			<form action="/api/api/getMoney" id="fromfb">
+				<label for="">验证码<input type="number" id="yzm"  maxlength="6" placeholder="请输入验证码"></label>
+			</form>			
+			<button class="get_yzm">获取验证码</button>
+		</div>
+		<div class="btn" id="btn_pay">
+			<a href="javascript:void(0);" class="pay_for">确认开通</a>
+		</div>
+		
+	</div>
+	<script>
+	
+		var disabled001 = true;
+		var entryCardOrderNo = '';
+		var wait = 60;
+		function time() {
+          if (wait == 0) {  //结束或错误重新开始
+              disabled001=true;            
+              wait = 60;  
+              $(".get_yzm").css({background:"#4aa7fc"}).text("重新获取");
+          } else {  
+          	$(".get_yzm").css({background:"#999"}).text('重新获取(' + wait + ')')
+              wait--;
+              setTimeout(function() {  
+                  time(wait)  
+              },1000)  
+          }  
+      }
+
+
+	 //点击获取验证码及倒计时重新获取验证码	  
+		$(".get_yzm").click(function(){
+		  var registId = '{$registId}';
+			 if(registId==''){
+			    mui.toast('未授权信息');
+				return false;
+			 }
+          
+          if(disabled001){
+          	disabled001 = false;
+          	time(wait)
+
+          	$.ajax({
+          		type: 'POST',
+					url: "{:request()->domain()}"+"/api/Drepay/entryCard",
+					data: "data="+JSON.stringify({
+						registId:registId
+					}),
+					success: function(response){
+						if(response.code==1){
+							entryCardOrderNo = response.result;
+							mui.toast(response.msg)
+						}else{
+							mui.toast(response.msg)
+						}
+					},
+					error: function(err){
+					}
+          	})
+          }
+                   
+		})
+		
+		var is_pay = 1;
+		
+		$(".pay_for").click(function(){
+			var yzm = $("#yzm").val();
+			console.log(yzm.length)
+			var registId = '{$registId}';
+			var temp_id = '{$temp_id}';
+			if(entryCardOrderNo==''){
+				mui.toast('请先获取验证码');
+				return false;
+			}
+			if(yzm.length != 5 && yzm.length != 6){
+				mui.toast('请输入验证码');
+			}else{
+
+				$("#btn_pay").css("background-color","#696969");
+				$(".pay_for").html("开通中...");
+				if(is_pay!=1){
+					mui.toast("请勿频繁操作");
+				}
+				is_pay = 0;
+				
+				//$('#fromfb').submit();
+				$.ajax({
+					type: 'POST',
+					url: "{:request()->domain()}"+"/api/Drepay/entrycardconfirm",
+					data: "yzm="+yzm+"&regist_id="+registId+"&temp_id="+temp_id+"&entryCardOrderNo="+entryCardOrderNo+"",
+					success: function(response){
+						is_pay = 1;
+						if(response.code==1){
+							location.href="/api/repay/payReturnHtml?code=1&msg="+response.msg+"";
+						}else{
+							mui.toast(response.msg);
+							$("#btn_pay").css("background-color","#4aa7fc");
+							$(".pay_for").html("确认开通");
+						}
+						
+						
+					},
+					error: function(err){
+						is_pay = 1;
+						location.href="/api/repay/payReturnHtml?code=1&msg=等待系统激活";
+					}
+				})	
+			}
+		})
+
+	</script>
+</body>
+</html>

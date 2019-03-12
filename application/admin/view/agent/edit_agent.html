@@ -1,0 +1,233 @@
+{include file="public/header" /}
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/style.css">
+<style>
+.file-item{float: left; position: relative; width: 110px;height: 110px; margin: 0 20px 20px 0; padding: 4px;}
+.file-item .info{overflow: hidden;}
+.uploader-list{width: 100%; overflow: hidden;}
+</style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>修改代理商</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" name="edit_agent" id="edit_agent" method="post" action="{:url('edit_agent')}">
+						<input type="hidden" name="id" value="{$agent.id}">
+						<div class="form-group">
+                            <label class="col-sm-3 control-label">推广链接：</label>
+                            <div class="input-group col-sm-4">
+                                <a href="{$agent.shareUrl}" target="_blank">{$agent.shareUrl}</a>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+						<div class="form-group">
+                            <label class="col-sm-3 control-label">代理商名称：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="real_name" type="text" class="form-control" name="real_name" value="{$agent.real_name}" placeholder="请输入代理商名称">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">登录账号：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="username" type="text" class="form-control" name="username" value="{$agent.username}" placeholder="请输入登录账号">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">密码：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="password" type="password" class="form-control" name="password" placeholder="请输入密码">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">类型：</label>
+							<div class="input-group col-sm-4">
+								<select class="form-control m-b chosen-select" name="group_id" id="group_id">
+									<option value="">==请选择类型==</option>
+									{if !empty($group)}
+										{foreach name="group" item="vo"}
+											<option value="{$vo.id}" {if condition="$agent['group_id'] eq $vo['id']"}selected{/if}>{$vo.group_name}</option>
+										{/foreach}
+									{/if}
+								</select>
+							</div>
+						</div>
+						<div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">结算银行：</label>
+                            <div class="input-group col-sm-4">
+                                <select class="form-control m-b chosen-select" name="bank_name" id="bank_name">
+                                    <option value="">==类型==</option>
+                                    {if !empty($bank_info)}
+                                        {foreach name="bank_info" item="vo"}
+                                            <option value="{$vo.bank_name}" {if condition="$agent.bank_name eq $vo['bank_name']"}selected{/if}>{$vo.bank_name}</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">结算卡户名：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="bank_real_name" type="text" class="form-control" name="bank_real_name" value="{$agent.bank_real_name}" placeholder="请输入结算卡户名">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">结算卡号：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="bank_code" type="text" class="form-control" name="bank_code" value="{$agent.bank_code}" placeholder="请输入结算卡号">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">联系号码：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="phone" type="number" class="form-control" name="phone" value="{$agent.phone}" placeholder="请输入联系号码">
+                            </div>
+                        </div>
+						 <!--<div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">收款代付费(元)：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="pay_dfee" type="text" class="form-control" name="pay_dfee" value="{$agent.pay_dfee}" placeholder="请输入收款代付费收益(元)">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+						 <div class="form-group">
+                            <label class="col-sm-3 control-label">收款收益(%)：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="pay_rate" type="text" class="form-control" name="pay_rate" value="{$agent.pay_rate}" placeholder="请输入收款收益(%)">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+                            <label class="col-sm-3 control-label">还款代付费(元)：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="repay_dfee" type="text" class="form-control" name="repay_dfee" value="{$agent.repay_dfee}" placeholder="请输入还款代付费收益(元)">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+						 <div class="form-group">
+                            <label class="col-sm-3 control-label">还款收益(%)：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="repay_rate" type="text" class="form-control" name="repay_rate" value="{$agent.repay_rate}" placeholder="请输入还款收益(%)">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+                            <label class="col-sm-3 control-label">垫资代付费(元)：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="dz_dfee" type="text" class="form-control" name="dz_dfee" value="{$agent.dz_dfee}" placeholder="请输入垫资代付费收益(元)">
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+						 <div class="form-group">
+                            <label class="col-sm-3 control-label">垫资收益(%)：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="dz_rate" type="text" class="form-control" name="dz_rate" value="{$agent.dz_rate}" placeholder="请输入垫资收益(%)">
+                            </div>
+                        </div>-->
+						<div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">状&nbsp;态：</label>
+                            <div class="col-sm-6">
+                                <div class="radio i-checks">
+                                    <input type="radio" name='status' value="1" {if condition="$agent['status'] eq 1 "}checked{/if}/>开启&nbsp;&nbsp;
+                                    <input type="radio" name='status' value="0" {if condition="$agent['status'] eq 0 "}checked{/if}/>关闭
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-3">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script type="text/javascript" src="/static/admin/webupload/webuploader.min.js"></script>
+
+<script type="text/javascript">
+
+    //提交
+    $(function(){
+        $('#edit_agent').ajaxForm({
+            beforeSubmit: checkForm, 
+            success: complete, 
+            dataType: 'json'
+        });
+        
+        function checkForm(){
+            if( '' == $.trim($('#username').val())){
+                layer.msg('请输入登录账号',{icon:2,time:1500,shade: 0.1}, function(index){
+                layer.close(index);
+                });
+                return false;
+            }
+
+            if( '' == $.trim($('#real_name').val())){
+                layer.msg('请输入代理商名称',{icon:2,time:1500,shade: 0.1}, function(index){
+                layer.close(index);
+                });
+                return false;
+            }
+			
+			if( '' == $.trim($('#group_id').val())){
+                layer.msg('请选择类型',{icon:2,time:1500,shade: 0.1}, function(index){
+                layer.close(index);
+                });
+                return false;
+            }
+
+        }
+
+
+        function complete(data){
+            if(data.code==1){
+                layer.msg(data.msg, {icon: 6,time:1500,shade: 0.1}, function(index){
+                    window.location.href="{:url('agent/agent')}";
+                });
+            }else{
+                layer.msg(data.msg, {icon: 5,time:1500,shade: 0.1});
+                return false;   
+            }
+        }
+     
+    });
+
+
+
+    //IOS开关样式配置
+   var elem = document.querySelector('.js-switch');
+        var switchery = new Switchery(elem, {
+            color: '#1AB394'
+        });
+    var config = {
+        '.chosen-select': {},                    
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+</script>
+</body>
+</html>

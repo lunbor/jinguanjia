@@ -1,0 +1,125 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>垫资警报</h5>
+        </div>
+        <div class="ibox-content">
+            <!--搜索框开始-->           
+            <div class="row">
+                <div class="col-sm-12">                                      
+                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('repay_warn')}">
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="text" id="key" class="form-control" name="key" value="{$val}" placeholder="输入需查询的订单号" />   
+                                <span class="input-group-btn"> 
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button> 
+                                </span>
+                            </div>
+                        </div>
+                    </form>                         
+                </div>
+            </div>
+            <!--搜索框结束-->
+            <div class="hr-line-dashed"></div>
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+								<th>手机号</th>
+								<th>卡号</th>
+                                <th>订单号</th>
+								<th>推荐人</th>
+                                <th>类别</th>
+                                <!--<th>原始金额</th>
+                                <th>日服务费</th>
+                                <th>清算服务费</th>-->
+                                <th>金额</th>
+                                <th>执行时间</th>
+                                <!--<th>状态</th>-->
+								<th>失败原因</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if(empty($list)):?>
+                                <tr><td colspan="8" align="center">暂无数据</td></tr>
+                            <?php else:?>
+                            <?php foreach($list as $vo):?>
+                            <tr>
+							    <td><a href="javascript:;" onClick="edit_member({$vo.user_id})" class="btn btn-primary btn-outline btn-xs">{$vo.realname}</a></td>
+								<td>{$vo.mobile}</td>
+								<td>{$vo.bank_name}|{$vo.credit_code}</td>
+                                <td>{$vo.order_no}</td>
+								 <td>
+								   {if condition="$vo.invite_id gt 0"}
+								   <a href="javascript:;" onClick="edit_member({$vo.invite_id})">{$vo.tj_mobile}|{$vo.tj_name}</a>
+								   {else/}
+								   -
+								   {/if}
+								 </td>
+                                <td>{:$type[$vo['type']]}</td>
+                                <!--<td>{$vo.a_money/100}</td>
+                                <td>{$vo.d_money/100}</td>
+                                <td>{$vo.s_money/100}</td>-->
+                                <td>{$vo.money/100}</td>
+                                <td>{:date('Y-m-d H:i:s',$vo.exetime)}</td>
+                                <!--<td>{:$status[$vo['status']]}</td>-->
+								<td>{$vo.resp_msg}</td>
+								<td>
+									<a href="javascript:;" onClick="repay_afresh({$vo.list_id})" class="btn btn-primary btn-xs btn-outline">重新扣款</a>&nbsp;&nbsp;
+									<a href="javascript:;" onClick="repay_list({$vo.repay_id})" class="btn btn-primary btn-xs btn-outline">查看任务</a>
+								</td>
+                            </tr>
+                            <?php endforeach;?>
+                            <?php endif;?>
+                            
+                        </tbody>
+                                                   
+                                    
+
+                    </table>
+                    <div id="AjaxPage" style="text-align:right;"></div>
+                    <div style="text-align: right;">
+                          {$list->render()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{include file="public/footer" /}
+
+<script type="text/javascript">
+  
+	//查看明细
+	function repay_afresh(id){
+		location.href = './repay_afresh/id/'+id+'.html';
+	}
+	
+	//查看明细
+	function repay_list(id){
+		location.href = './repay_list/id/'+id+'.html';
+	}
+	
+	//编辑会员
+	function edit_member(id){
+		location.href = '../member/edit_member/id/'+id+'.html';
+	}
+	
+
+	function AjaxPage(curr){
+		$(".form-search").append('<input type="hidden" name="page" id="page" value="'+curr+'">');
+		$('.form-search').submit();
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- 随大小设备自动适配 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=0, user-scalable=no"/>
+	<!-- 去除苹果手机的默认样式 -->
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="x5-orientation" content="portrait"/>
+	<meta name="screen-orientation" content="portrait"/>
+
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!-- 取消设备对手机号进行识别 -->
+	<meta name="format-detection" content="telephone=no, email=no">
+	<meta name="msapplication-tap-highlight" content="no">
+	<title>提交支付</title>
+	<link rel="stylesheet" href="/static/register/css/reset.css">
+	<link rel="stylesheet" href="/static/register/css/mui.min.css">
+	<script src="/static/register/js/mui.min.js"></script>
+	
+	<script src="/static/register/js/jQuery-2.1.4.min.js"></script>
+	<style>
+	</style>
+
+</head>
+<body  style="background-color:#fff">
+	<div class="sContent" style="margin-top:50px;">
+		
+		<div class="pay_card" style="margin:0 auto; text-align:center; width:100%; padding:0px 60px ">
+			{if condition="$code eq 1"}
+				<img src="/static/register/images/wc_icon.png">
+			{else/}
+				<img src="/static/register/images/error_icon.png">
+			{/if}
+			<p style="line-height:50px; font-size:16px;">{if condition="$msg eq ''"}操作完成{else/}{$msg}{/if}</p>
+		</div>
+
+	</div>
+</body>
+</html>

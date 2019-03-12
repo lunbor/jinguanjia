@@ -1,0 +1,145 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>还款任务记录</h5>
+        </div>
+        <div class="ibox-content">
+            <!--搜索框开始-->           
+			<div class="row">
+                <div class="col-sm-12">                                     
+                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('repay_program')}">
+						<div class="col-sm-2">
+                            <div class="input-group">
+								<select class="form-control m-b chosen-select" name="qd_id" id="qd_id">
+                                    <option value="">==请选择渠道商==</option>
+                                    {if !empty($distributor)}
+                                        {foreach name="distributor" item="vo"}
+                                            <option value="{$vo.qd_id}" {if condition="$qd_id eq $vo['qd_id']"}selected{/if}>{$vo.nickname}</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+							</div>
+						</div>
+						
+						<div class="col-sm-2">
+                            <div class="input-group">
+								<select class="form-control m-b chosen-select" name="status" id="status">
+                                    <option value="">==状态==</option>
+                                    {if !empty($status)}
+                                        {foreach name="status" item="vo" key="k"}
+                                            <option value="{$k}" {if condition="$sea_status eq $k  and $sea_status neq ''"}selected{/if}>{$vo}</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+							</div>
+						</div>
+						
+						<div class="col-sm-2">
+                            <div class="input-group">
+								<select class="form-control m-b chosen-select" name="current" id="current">
+                                    <option value="">==计划类型==</option>
+                                    {if !empty($currentType)}
+                                        {foreach name="currentType" item="vo" key="k"}
+                                            <option value="{$k}" {if condition="$sea_current eq $k  and $sea_current neq ''"}selected{/if}>{$vo}</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+							</div>
+						</div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="text" id="key" class="form-control" name="key" value="{$val}" placeholder="输入需查询的手机号" />   
+                                <span class="input-group-btn"> 
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button> 
+                                </span>
+                            </div>
+                        </div>
+                    </form>                         
+                </div>
+            </div>
+
+            <!--搜索框结束-->
+            <div class="hr-line-dashed"></div>
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>真实姓名</th>
+                                <th>手机号</th>
+                                <th>信用卡号</th>
+                                <th>任务总金额</th>
+                                <th>消费服务费</th>
+                                <th>消费峰值</th>
+                                <th>最低预留额度</th>
+                                <th>日服务费总额</th>
+								<th>计划类型</th>
+								<th>是否垫资</th>
+                                <th>创建时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if(empty($list)):?>
+                                <tr><td colspan="11" align="center">暂无数据</td></tr>
+                            <?php else:?>
+                            <?php foreach($list as $vo):?>
+                            <tr>
+                                <td>{$vo.realname}</td>
+                                <td>{$vo.mobile}</td>
+                                <td>{$vo.credit_code}</td>
+                                <td>{$vo.total_money/100}</td>
+                                <td>{$vo.serve_money/100}</td>
+                                <td>{$vo.max_expen/100}</td>
+                                <td>{$vo.min_money/100}</td>
+                                <td>{$vo.day_money/100}</td>
+								<td>{:$currentType[$vo['current']]}</td>
+								<td>{:$dzType[$vo['is_dz']]}</td>
+                                <td>{:date('Y-m-d H:i:s',$vo.ctime)}</td>
+                                <td>{:$status[$vo['status']]}</td>
+                                <td>
+                                    <a href="javascript:;" onClick="repay_list({$vo.pro_id})" class="btn btn-primary btn-xs btn-outline">
+                                        <i class="fa fa-paste"></i>查看详情</a>&nbsp;&nbsp;
+                                </td>
+                            </tr>
+                            <?php endforeach;?>
+                            <?php endif;?>
+                            
+                        </tbody>
+                                                   
+                                    
+
+                    </table>
+                    <div id="AjaxPage" style="text-align:right;"></div>
+                    <div style="text-align: right;">
+                          {$list->render()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{include file="public/footer" /}
+
+<script type="text/javascript">
+  
+	//查看明细
+	function repay_list(id){
+		location.href = './repay_list/id/'+id+'.html';
+	}
+
+    function AjaxPage(curr){
+		$(".form-search").append('<input type="hidden" name="page" id="page" value="'+curr+'">');
+		$('.form-search').submit();
+    }
+
+</script>
+</body>
+</html>

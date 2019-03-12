@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width" name="viewport" />
+<meta content="initial-scale=1.0,user-scalable=no,maximum-scale=1" media="(device-height: 568px)" name="viewport">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta content="telephone=no" name="format-detection" />
+<link href="__CSS__/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="__JS__/jquery.min.js?v=2.1.4"></script>
+<title>渠道商-登录</title>
+<style>
+body{ margin:0; padding:0; color:#666; background:#d3f1e4;}
+.form_login{ max-width:640px; margin:auto; text-align:center; padding-top:30px;}
+.form-group{ width:355px; margin:0 auto; height:50px; margin-bottom:20px;}
+.form-group .fa{ display:block; width:50px; height:50px; float:left;}
+.form-group .form-control-bh{ display:block; width:300px; height:48px; float:left; border:1px solid #ccc; padding:0; margin-left:0; text-indent:1em; themeColor: #00a988;font-size: 18px;}
+*{box-sizing:inherit;}
+.form-group .form-control-bh:hover{ border:1px solid #00a988;}
+.form-group .checkfont{ color:#666;}
+.form-group .btn-bh{ width:340px; height:50px; background-color:#00ae66; border:0px; color:#fff; font-size:14px;}
+.form-group .btn-bh:hover{background-color:#00ae66;border:0px;}
+.form-group .btn-primary.disabled{background-color:#3c763d;border:0px;}
+.btn-primary.disabled:hover{background-color:#3c763d;border:0px;}
+.fa-user{ background:url(__IMG__/user.png) no-repeat center;}
+.fa-key{ background:url(__IMG__/pw.png) no-repeat center;}
+.fa-code{ background:url(__IMG__/code.png) no-repeat center;}
+.form_footer{ margin-top:40px; font-size:12px; color:#5B809A;}
+
+</style>
+</head>
+
+<body>
+<div class="form_login">
+<div class="form_logo"><img src="__IMG__/logo.png" /></div>
+<form method="post" role="form" id="doLogin" action="{:url('doLogin')}">
+
+    <div class="form-group">
+    	<i class="fa fa-user"></i>
+		<input type="text" class="form-control-bh" name="username" id="username" placeholder="请输入登录账号" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+		<i class="fa fa-key"></i>
+        <input type="password" class="form-control-bh" name="password" id="password" placeholder="请输入密码" autocomplete="off">
+    </div>
+	<div class="form-group">
+		<i class="fa fa-code"></i>
+        <input type="text" class="form-control-bh" placeholder="验证码" style="color:black;width:159px;float:left;margin:0px 0px;" name="code" id="code"/>
+        <img src="{:url('checkVerify')}" onClick="javascript:this.src='{:url('checkVerify')}?tm='+Math.random();" style="float:left;cursor: pointer"/>
+	</div>  
+    <div class="form-group" style="height:25px; line-height:25px; text-align:left;">
+        <input type="checkbox" class="" name="checkbox" id="checkbox" placeholder="checkbox" autocomplete="off">
+        <span class="checkfont">记住我的帐号</span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn-bh btn-primary btn-block btn-login">登　录</button>
+    </div>
+
+</form>
+<div class="form_footer">@2019 豆米渠道商信息查询入口</div>
+</div>
+<script type="text/javascript" src="__JS__/bootstrap.min.js?v=3.3.6"></script>
+<script type="text/javascript" src="__JS__/jquery.form.js"></script>
+<script type="text/javascript" src="__JS__/layer/layer.js"></script>
+<script type="text/javascript" src="__JS__/lunhui.js"></script>
+<script>
+ 	$(function(){
+        $('#doLogin').ajaxForm({
+            beforeSubmit: checkForm, // 此方法主要是提交前执行的方法，根据需要设置
+            success: complete, // 这是提交后的方法
+            dataType: 'json'
+        });
+        
+        function checkForm(){
+            if( '' == $.trim($('#username').val())){           
+                lunhui.error('请输入登录用户名');
+                return false;
+            }
+     
+            if( '' == $.trim($('#password').val())){
+                lunhui.error('请输入登录密码');
+                return false;
+            }
+        
+            $('button').addClass('disabled').text('登录中...');
+        }
+
+
+        function complete(data){
+            if(data.code==1){
+                lunhui.success(data.msg,data.url);
+            }else{ 
+                lunhui.error(data.msg);
+                $('button').removeClass('disabled').text('登　录');   
+                return false;   
+            }
+        }
+    });
+</script>
+</body>
+</html>

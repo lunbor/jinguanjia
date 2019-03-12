@@ -1,0 +1,157 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>提现审核</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" name="apply" id="apply" method="post" action="{:url('withdraw_check')}">
+                        <input type="hidden" name="id" value="{$info.id}">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">代理商名称：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.real_name}</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+						<div class="form-group">
+                            <label class="col-sm-3 control-label">代理商账号：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.username}</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                         <div class="form-group">
+                            <label class="col-sm-3 control-label">联系电话：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.phone}</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                         <div class="form-group">
+                            <label class="col-sm-3 control-label">提现金额：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.money}</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                         <div class="form-group">
+                            <label class="col-sm-3 control-label">提现银行：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.bank_name}</span>
+                            </div>
+                        </div>
+						<div class="hr-line-dashed"></div>
+                         <div class="form-group">
+                            <label class="col-sm-3 control-label">提现银行卡户名：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.bank_real_name}</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                         <div class="form-group">
+                            <label class="col-sm-3 control-label">提现银行卡号：</label>
+                            <div class="input-group col-sm-4">
+                                <span class="form-control">{$info.bank_code}</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                         <div class="form-group">
+                            <label class="col-sm-3 control-label">备注：</label>
+                            <div class="input-group col-sm-4">
+                                <textarea name="remark" id="remark" cols="50" rows="10" >{$info.remark}</textarea>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>                      
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">审核状态：</label>
+                            {if condition="$info['status'] eq 0 "}
+                            <div class="col-sm-6">
+                                <div class="radio i-checks">
+                                    <input type="radio" name='status' value="1" <?php if($info['status']==1||$info['status']==0):?>checked<?php endif;?>/>通过审核&nbsp;&nbsp;
+                                    <input type="radio" name='status' value="2" <?php if($info['status']==-1):?>checked<?php endif;?>/>拒绝
+                                </div>
+                            </div>
+                            {/if}
+                            {if condition="$info['status'] eq 1 "}
+                            <div class="col-sm-6">
+                                <div class="radio i-checks">
+                                    <input type="radio" name='status' value="1" <?php if($info['status']==1):?>checked<?php endif;?>/>已通过
+                                </div>
+                            </div>
+                            {/if}
+                            {if condition="$info['status'] eq 2 "}
+                            <div class="col-sm-6">
+                                <div class="radio i-checks">
+                                    <input type="radio" name='status' value="2" <?php if($info['status']==2):?>checked<?php endif;?>/>已拒绝
+                                </div>
+                            </div>
+                            {/if}
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-3">
+                                {if condition="$info['status'] eq 0 "}
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                                {/if}
+                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script type="text/javascript">
+
+
+    $(function(){
+        $('#apply').ajaxForm({
+            beforeSubmit: checkForm, 
+            success: complete, 
+            dataType: 'json'
+        });
+        
+        function checkForm(){
+             if( '' == $.trim($('#remark').val())){
+                 layer.msg('请输入备注信息',{icon:2,time:1500,shade: 0.1}, function(index){
+                 layer.close(index);
+                 });
+                 return false;
+             }
+        }
+
+
+        function complete(data){
+            if(data.code==1){
+                layer.msg(data.msg, {icon: 6,time:1500,shade: 0.1}, function(index){
+                    window.location.href="{:url('withdraw_list')}";
+                });
+            }else{
+                layer.msg(data.msg, {icon: 5,time:1500,shade: 0.1});
+                return false;   
+            }
+        }
+     
+    });
+</script>
+</body>
+</html>

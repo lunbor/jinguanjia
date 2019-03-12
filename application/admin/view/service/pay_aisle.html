@@ -1,0 +1,104 @@
+{include file="public/header" /}
+<style type="text/css">
+	.input-group{
+		float: right;
+		margin-top: -10px;
+    	margin-right: 30px;
+	}
+	.img{
+		width: 4rem;
+    	height: auto;
+	}
+</style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>通道列表</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="long-tr">
+                                <th width="4%">ID</th>
+                                <th width="9%">支付方式</th>
+                                <th width="9%">字母标识</th>
+                                <th width="9%">图标</th>
+                                <th width="20%">标签块</th>
+                                <th width="18%">额度说明</th>
+                                <th width="5%">费率</th>
+                                <th width="10%">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-content">
+                        	{volist name="list" id="item" key="key" empty="$empty"}
+                        		<tr class="long-td">
+                        			<td>{$item.block_id}</td>
+                        			<td>{$item.name}</td>
+                        			<td>{$item.keyname}</td>
+                        			<td><img class="img img-thumbnail" src="__UPLOAD__/{$item.head_pic}" onerror='this.src="__STATIC__/admin/images/no_img.jpg"'></td>
+                        			<td>
+                        				{:json2str($item.tit_block)}
+                        			</td>
+                        			<td>{$item.tit_limit}</td>
+                        			<td>{$item.feilv}</td>
+                        			<td>
+                        				<a href="javascript:;" onClick="edit_pay_type_block({$item.block_id})" class="btn btn-primary btn-outline btn-xs">
+                                        <i class="fa fa-paste"></i> 编辑</a>&nbsp;&nbsp;
+                                    	<a href="javascript:;" onClick="del_block({$item.block_id},$(this))" class="btn btn-danger btn-outline btn-xs">
+                                        <i class="fa fa-trash-o"></i> 删除</a>    
+                        			</td>
+                        		</tr>
+                        	{/volist}
+                        </tbody>
+                    </table>
+                    <div id="AjaxPage" style=" text-align: right;">共{$count}条数据</div>
+                    <div id="allpage" style=" text-align: right;">{$page}</div>
+                </div>
+            </div>
+            <!-- End Example Pagination -->
+        </div>
+    </div>
+</div>
+<!-- End Panel Other -->
+</div>
+{include file="public/footer" /}
+
+<script type="text/javascript">
+//	$.ajax({
+//		type:"get",
+//		url:"{:url('')}?",
+//		async:true
+//	});
+//编辑支付方式标签卡
+function edit_pay_type_block(id){
+    location.href = "{:url('editPayTypeBlock')}?block_id="+id;
+}
+
+//删除支付方式块标签
+function del_block(id,obj){
+	var _this=obj;
+	layer.confirm('确认删除此条记录吗?', {icon: 3, title:'提示'}, function(index){
+		$.ajax({
+			type:"get",
+			url:"{:url('editPayTypeBlock')}?block_id="+id+"&act=del",
+			async:true,
+			success:function(data){
+				if(data.code>0){
+					layer.msg('删除成功',{icon:1,time:1000,end:function(){
+						_this.parents('tr').remove();
+						layer.close(index);
+					}});
+				}else{
+					layer.msg('删除失败',{icon:2});
+				}
+			}
+		});
+	})
+}
+</script>
+</body>
+</html>

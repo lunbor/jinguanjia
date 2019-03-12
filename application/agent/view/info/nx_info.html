@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>渠道商平台</title>
+        <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"/>
+        <meta content="yes" name="apple-mobile-web-app-capable"/>
+        <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+        <meta content="telephone=no" name="format-detection"/>
+        <link href="__CSS__/style.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="__JS__/jquery.min.js?v=2.1.4"></script>
+        <script type="text/javascript" src="__JS__/aui-chart.min.js"></script>
+
+
+    <body>
+        <section class="aui-flexView">
+            <header class="aui-navBar aui-navBar-fixed">
+                <a href="{:url('index/loginOut')}" class="aui-navBar-item">
+                    <i class="icon icon-return"></i>
+                </a>
+                <div class="aui-center">
+                    <span class="aui-center-title">渠道商</span>
+                </div>
+                <a href="javascript:;" class="aui-navBar-item">
+                    <i class="icon icon-sys"></i>
+                </a>
+            </header>
+            <section class="aui-scrollView">
+                <div class="aui-price-box">
+                    <div class="aui-price-search">
+                        <div class="aui-search-item">
+							
+                            <i class="icon icon-search"></i>
+							可提现金额平台于每月10号进行自动结算！
+							<!--请保管好自己的登录账号和密码，切勿告诉他人！
+                            <input type="text" name="" placeholder="请输入小区名称或者商业圈">-->
+                        </div>
+                    </div>
+                    <div class="aui-price-beijing">
+                        <h2>{$info.nickname} •<em>可提现金额</em></h2>
+                        <h3>{$info.money} <em>元(总收益：{:number_format($info.z_money,2)}元)</em></h3>
+                    </div>
+                    <div class="aui-credit-pattern">
+                        <a href="javascript:;" class="aui-pattern-item">
+                            <div class="aui-pattern-title">总会员</div>
+                            <div class="aui-pattern-text">{:number_format($info.member_num)}</div>
+                        </a>
+                        <a href="javascript:;" class="aui-pattern-item">
+                            <div class="aui-pattern-title">收款金额</div>
+                            <div class="aui-pattern-text">{:number_format($info.get_money,2)}</div>
+                        </a>
+                        <a href="javascript:;" class="aui-pattern-item">
+                            <div class="aui-pattern-title">还款金额</div>
+                            <div class="aui-pattern-text">{:number_format($info.repay_money,2)}</div>
+                        </a>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <div class="chart-head b-line">
+                        <h2>交易量走势</h2>
+                    </div>
+                    <canvas id="mountNode" style="width:100%"></canvas>
+                    <div class="aui-center-time">
+                        <p>温馨提示: 以上交易金额都为交易已完成的数据统计</p>
+                        <p>更新时间: {$info.now_time}</p>
+                    </div>
+                </div>
+                <script type="text/javascript">
+					$.ajax({
+						type:"get",
+						url:"{:url('get_sj_ajax')}",
+						async:true,
+						success:function(data){
+							console.log(data);
+							if(data.code>0){
+								
+								var data = data.datas;
+								var chart = new F2.Chart({
+									id: 'mountNode',
+									pixelRatio: window.devicePixelRatio
+								});
+								chart.source(data);
+								chart.tooltip({
+									showCrosshairs: true
+								});
+								chart.legend({
+									marker: function marker(x, y, r, ctx) {
+										ctx.lineWidth = 2;
+										ctx.strokeStyle = ctx.fillStyle;
+										ctx.moveTo(x - r - 4, y);
+										ctx.lineTo(x + r + 4, y);
+										ctx.stroke();
+										ctx.arc(x, y, r, 0, Math.PI * 2, false);
+										ctx.fill();
+									}
+								});
+								chart.line().position('month*temperature').color('city');
+								chart.point().position('month*temperature').color('city').style({
+									lineWidth: 2,
+									stroke: '#fff'
+								});
+								chart.render();
+								
+								
+							}else{
+								//layer.msg('删除失败',{icon:2});
+							}
+						}
+					});
+                </script>
+            </section>
+            <footer class="aui-footer aui-footer-fixed">
+                <a href="http://wpa.qq.com/msgrd?v=3&amp;uin=1582978230&amp;site=qq&amp;menu=yes" class="aui-tabBar-item" target="_blank">
+                    联系客服
+                </a>
+            </footer>
+        </section>
+
+
+
+
+
+
+
+
+    </body>
+</html>

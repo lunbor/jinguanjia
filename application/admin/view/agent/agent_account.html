@@ -1,0 +1,105 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>代理商资金明细</h5>
+        </div>
+        <div class="ibox-content">
+            <!--搜索框开始-->           
+            <div class="row">
+                <div class="col-sm-12">                                   
+                    <form name="admin_list_sea" class="form-search" method="post" action="{:url('agent_account')}">
+					
+						<div class="col-sm-2">
+                            <div class="input-group">
+								<select class="form-control m-b chosen-select" name="sytype" id="sytype">
+                                    <option value="">==收益类型==</option>
+                                    {if !empty($account_sytype)}
+                                        {foreach name="account_sytype" item="vo" key="k"}
+                                            <option value="{$k}" {if condition="$sea_sytype eq $k  and $sea_sytype neq ''"}selected{/if}>{$vo}</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+							</div>
+						</div>
+						
+                        <div class="col-sm-3">
+                            <div class="input-group">
+								<input type="hidden" name="id" value="{$id}">
+                                <select class="form-control m-b chosen-select" name="type" id="type">
+                                    <option value="">==类型==</option>
+                                    {if !empty($account_type)}
+                                        {foreach name="account_type" item="vo" key="k"}
+                                            <option value="{$k}" {if condition="$sea_type eq $k  and $sea_type neq ''"}selected{/if}>{$vo}</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+                                <span class="input-group-btn"> 
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button> 
+                                </span>
+                            </div>
+                        </div>
+                    </form>                         
+                </div>
+            </div>
+            <!--搜索框结束-->
+            <div class="hr-line-dashed"></div>
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>备注</th>
+                                <th>金额</th>
+                                <th>类型</th>
+								<th>收益类型</th>
+								<th>收益订单</th>
+								<th>时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if(empty($list)):?>
+                                <tr><td colspan="11" align="center">暂无数据</td></tr>
+                            <?php else:?>
+                            <?php foreach($list as $vo):?>
+                            <tr>
+                                <td>{$vo.desc}</td>
+                                <td>{$vo.money}</td>
+                                <td>{:$account_type[$vo.type]}</td>
+                                <td>{if condition="$vo['sytype'] neq 0 "}{:$account_sytype[$vo.sytype]}{/if}</td>
+                                <td>{$vo.order_no}</td>
+                                <td>{:date('Y-m-d H:i:s',$vo.change_time)}</td>
+                            </tr>
+                            <?php endforeach;?>
+                            <?php endif;?>
+                            
+                        </tbody>
+                                                   
+                                    
+
+                    </table>
+                    <div id="AjaxPage" style="text-align:right;"></div>
+                    <div style="text-align: right;">
+                          {$list->render()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{include file="public/footer" /}
+
+<script type="text/javascript">
+	function AjaxPage(curr){
+		$(".form-search").append('<input type="hidden" name="page" id="page" value="'+curr+'">');
+		$('.form-search').submit();
+    }
+
+</script>
+</body>
+</html>

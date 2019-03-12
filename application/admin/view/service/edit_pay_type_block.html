@@ -1,0 +1,243 @@
+{include file="public/header" /}
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/style.css">
+<style>
+.file-item{float: left; position: relative; width: 110px;height: 110px; margin: 0 20px 20px 0; padding: 4px;}
+.file-item .info{overflow: hidden;}
+.uploader-list{width: 100%; overflow: hidden;}
+</style>
+<style type="text/css">
+	.tail{
+		position: absolute;
+	    top: 0.6rem;
+	    right: -2rem;
+	    font-size: 1.8rem;
+	}
+	.addBlockBtn{
+		float: right;
+	    width: 3.6rem;
+	    height: 3.6rem;
+	    border-radius: 50%;
+	    outline: none;
+	    box-sizing: border-box;
+	    border: none;
+	    font-size: 6rem;
+	    line-height: 3.6rem;
+	    text-align: center;
+	}
+	.addBlockBtn:hover{
+		background-color: rgb(1,183,238);
+	}
+	.addBlockBtn:active{
+		background-color: rgb(26,179,148);
+	}
+	.addBlockBtn>i{
+		margin-left: -0.4rem;
+	}
+	#addBlock{
+		padding: 0 0 1rem 0;
+	    width: 60rem;
+    	margin-left: 19%;
+	}
+	#addBlock input{
+		padding-left: 0.4rem;
+	}
+	#addBlock span.delBlock{
+		border: 1px solid rgb(169,169,169);
+	    position: relative;
+	    left: 0;
+	    font-size: 1.2em;
+	    padding: 0 0.5rem;
+	    text-align: center;
+	    top: 0.1rem;
+	}
+	#addBlock span.delBlock:hover{
+		cursor:pointer;
+		border-color: rgb(1,183,238);
+		color: rgb(1,183,238);
+	}
+	.addBlock{
+		margin-left: 2rem;
+    	margin-top: 1rem;
+	}
+	#img_data{
+		height: auto;
+		width:80px;
+		float:left;
+		margin-left: 50px;
+		margin-top: -10px;
+	}
+	.block{
+		display: inline-block;
+	}
+</style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加支付方式块标签</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" name="payTypeBlock" id="payTypeBlock" method="post" action="{:url('')}">
+                    	<input type="hidden" name="block_id" value="{if !empty($block.block_id)}{$block.block_id}{/if}" />
+                        <div class="form-group">
+                            <label for="name" class="col-sm-3 control-label">支付方式名称：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="name" type="text" class="form-control" name="name" value="{if !empty($block)}{$block.name}{/if}" placeholder="">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="keyname" class="col-sm-3 control-label">字母标识：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="keyname" type="text" class="form-control" name="keyname" {if isset($block.keyname) && !empty($block.keyname)}disabled="disabled"{/if} value="{if !empty($block)}{$block.keyname}{/if}" placeholder="">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">支付方式图标：</label>
+                            <div class="input-group col-sm-4">
+                            	<input type="hidden" id="old_img" name="old_img" value="{if !empty($block.head_pic)}{$block.head_pic}{/if}" />
+                                <input type="hidden" id="data_photo" name="head_pic" value="{if !empty($block.head_pic)}{$block.head_pic}{/if}">
+                                <div id="fileList" class="uploader-list" style="float:right"></div>
+                                <div id="imgPicker" style="float:left">选择图标</div>
+                                <img id="img_data" class="img-thumbnail" {if !empty($block.head_pic)}src="__UPLOAD__/{$block.head_pic}"{else}src="__STATIC__/admin/images/no_img.jpg"{/if}  onerror='this.src="__STATIC__/admin/images/no_img.jpg"'/>
+                            </div>
+                        </div> 
+                        
+                        <div class="hr-line-dashed"></div>
+                        <!--<label class="col-sm-3 control-label">标签块：</label>-->
+                        <div id="addBlock">
+                        	<button class="addBlockBtn" onClick="addBlock()" type="button"><span>+</span></button>{if !empty($block.tit_block)}{volist name="$block.tit_block" id='item' key='key'}<div class="block"><input data-key="{$key}" type="text" name="block[]" class="addBlock" value="{$item}" /><span class="delBlock" onClick="del_block($(this))">×</span></div>{/volist}{/if}</div>
+                        
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="tit_limit" class="col-sm-3 control-label">额度说明：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="tit_limit" type="text" class="form-control" value="{if !empty($block.tit_limit)}{$block.tit_limit}{/if}" name="tit_limit" placeholder="">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="feilv" class="col-sm-3 control-label">费率：</label>
+                            <div class="input-group col-sm-4">
+                                <input id="feilv" type="text" class="form-control" value="{if !empty($block.feilv)}{$block.feilv}{/if}" name="feilv"><!--<i class="tail">%</i>-->
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+						 <div class="form-group">
+                            <label class="col-sm-3 control-label">状&nbsp;态：</label>
+                            <div class="col-sm-6">
+                                <div class="radio i-checks">
+                                    <input type="radio" name='status' value="1" {if condition="$block['status'] eq 1 "}checked{/if}/>开启&nbsp;&nbsp;
+                                    <input type="radio" name='status' value="0" {if condition="$block['status'] eq 0 "}checked{/if}/>关闭
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-3">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存</button>&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script type="text/javascript" src="/static/admin/webupload/webuploader.min.js"></script>
+
+<script type="text/javascript">
+    var $list = $('#fileList');
+    //上传图片,初始化WebUploader
+    var uploader = WebUploader.create({
+     
+        auto: true,// 选完文件后，是否自动上传。   
+        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径 
+        server: "{:url('Upload/upload')}?path=default",// 文件接收服务端。
+        duplicate :true,// 重复上传图片，true为可重复false为不可重复
+        pick: '#imgPicker',// 选择文件的按钮。可选。
+
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        },
+
+        'onUploadSuccess': function(file, data, response) {
+            $("#data_photo").val(data._raw);
+            $("#img_data").attr('src', '/uploads/images/' + data._raw).show();
+        }
+    });
+
+    uploader.on( 'fileQueued', function( file ) {
+        $list.html( '<div id="' + file.id + '" class="item">' +
+            '<h4 class="info">' + file.name + '</h4>' +
+            '<p class="state">正在上传...</p>' +
+        '</div>' );
+    });
+
+    // 文件上传成功
+    uploader.on( 'uploadSuccess', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传成功！');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传出错!');
+    }); 
+	
+	//添加标签块
+	function addBlock(){
+		$('<div class="block"><input type="text" name="block[]" class="addBlock" value="" /><span class="delBlock" onclick="del_block($(this))">×</span></div>').appendTo($('#addBlock'));
+	}
+	function del_block(obj){
+		obj.parents('div.block').remove();
+	}
+    //提交
+    $(function(){
+        $('#payTypeBlock').ajaxForm({
+//          beforeSubmit: checkForm, 
+            success: complete, 
+//          dataType: 'json'
+        });
+        
+        function complete(data){
+            if(data.code==1){
+                layer.msg(data.msg, {icon: 6,time:1500,shade: 0.1}, function(index){
+                    window.location.href="{:url('payAisle')}";
+                });
+            }else{
+                layer.msg(data.msg, {icon: 5,time:1500,shade: 0.1});
+                return false;   
+            }
+        }
+     
+    });
+	
+	
+	 //IOS开关样式配置
+   var elem = document.querySelector('.js-switch');
+        var switchery = new Switchery(elem, {
+            color: '#1AB394'
+        });
+    var config = {
+        '.chosen-select': {},                    
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+</script>
+</body>
+</html>
